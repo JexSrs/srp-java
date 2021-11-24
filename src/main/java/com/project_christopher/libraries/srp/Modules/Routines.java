@@ -6,6 +6,10 @@ public class Routines {
 
     public Parameters parameters;
 
+    public Routines() {
+        this(new Parameters());
+    }
+
     public Routines(Parameters parameters) {
         this.parameters = parameters;
     }
@@ -106,7 +110,7 @@ public class Routines {
         do {
             bi = Utils.generateRandomBigint(numBytes / 8).mod(this.parameters.primeGroup.N);
         }
-        while (!bi.equals(BigInteger.ZERO));
+        while (bi.equals(BigInteger.ZERO));
 
         return bi;
     }

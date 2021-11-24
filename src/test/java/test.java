@@ -1,5 +1,26 @@
+import com.project_christopher.libraries.srp.Client;
+import com.project_christopher.libraries.srp.Components.IVerifierAndSalt;
+import com.project_christopher.libraries.srp.Components.M1AndA;
+import com.project_christopher.libraries.srp.Exceptions.BadClientCredentials;
+import com.project_christopher.libraries.srp.Exceptions.BadServerCredentials;
+import com.project_christopher.libraries.srp.Modules.Parameters;
+import com.project_christopher.libraries.srp.Modules.Routines;
+import com.project_christopher.libraries.srp.Modules.Utils;
+import com.project_christopher.libraries.srp.Server;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+
+class Document {
+    String username, salt, verifier;
+
+    public Document(String username, String salt, String verifier) {
+        this.username = username;
+        this.salt = salt;
+        this.verifier = verifier;
+    }
+}
 
 public class test {
 
@@ -11,14 +32,81 @@ public class test {
 
     @Test
     public void test_exceptions() throws Exception {
-        System.out.println("Starting test file.");
+        System.out.println("Start of test file.");
 
+        ArrayList<Document> db = new ArrayList<>();
+        register(db);
+        login(db);
 
+        System.out.println("End of test file.");
 
         new Thread(() -> {
             Assertions.assertDoesNotThrow(() -> Thread.sleep(TIMEOUT));
-            System.out.println("Exiting test file");
-            System.exit(0);
+            System.out.println("Timeout was reached.");
+            System.exit(1);
         }).start();
+    }
+
+
+
+    public void register(ArrayList<Document> db) {
+        // Client
+        final String username = "projectChristopher";
+        final String password = "password";
+
+        Routines routines = new Routines(new Parameters());
+        IVerifierAndSalt verifierAndSalt = Utils.generateVerifierAndSalt(routines, username, password);
+        String salt = verifierAndSalt.salt;
+        String verifier = verifierAndSalt.verifier;
+        /* sendToServer(username, salt, verifier) */
+
+        // Server
+        /* storeToDatabase(username, salt, verifier) */
+        db.add(new Document(username, salt, verifier));
+    }
+
+    public void login(ArrayList<Document> db) throws BadServerCredentials {
+        final String username = "projectChristopher";
+        String password = "password";
+
+        // Client
+        Client client = new Client(new Routines(new Parameters()));
+        client.step1(username, password);
+        password = ""; // No longer needed.
+        /* sendToServer(username) */
+
+        // Server
+        Server server = new Server(new Routines(new Parameters()));
+        Document document = db.get(0); // Search in db
+        if(document == null) {
+            // Send random data to avoid if user exists
+            /* respondToClient(randomB, randomSalt) */
+            return;
+        }
+
+        String salt = document.salt;
+        String B = server.step1(username, salt, document.verifier); // Generate server's public key
+        /* respondToClient(B, salt) */
+
+        // Client
+        M1AndA m1AndA = client.step2(salt, B);
+        String M1 = m1AndA.M1;
+        String A = m1AndA.A;
+        /* sendToServer(A, M1) */
+
+        // Server
+        String M2 = null;
+        try { M2 = server.step2(A, M1); }
+        catch (BadClientCredentials e) {
+            e.printStackTrace();
+            // Send random data.
+            /* respondToClient(randomM2) */
+        }
+        /* respondToClient(M2) */
+
+        // Client
+        client.step3(M2);
+
+        System.exit(0);
     }
 }
