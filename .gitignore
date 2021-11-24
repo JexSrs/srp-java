@@ -1,0 +1,15 @@
+# IntelliJ
+out/
+.idea/
+*.iml
+
+# Gradle
+.gradle/
+build/
+classes/
+
+#gradle.properties
+*.icls
+src/test/resources/
+
+config.json
