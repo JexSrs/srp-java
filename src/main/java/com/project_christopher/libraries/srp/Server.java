@@ -34,7 +34,7 @@ public class Server {
 
         BigInteger b = this.routines.generatePrivateValue();
         BigInteger k = this.routines.computeK();
-        BigInteger B = this.routines.computeServerPublicValue(this.routines.parameters, k, v, b);
+        BigInteger B = this.routines.computeServerPublicValue(k, v, b);
 
         this.I = identity;
         this.salt = new BigInteger("0x" + salt);
@@ -58,7 +58,7 @@ public class Server {
         BigInteger u = this.routines.computeU(A, this.B);
 
         // S
-        return this.routines.computeServerSessionKey(this.routines.parameters.primeGroup.N, this.verifier, u, A, this.b);
+        return this.routines.computeServerSessionKey(this.verifier, u, A, this.b);
     }
 
     /**

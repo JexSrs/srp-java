@@ -6,6 +6,7 @@ import com.project_christopher.libraries.srp.Components.RandomBytes;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class Crypto {
      */
     static CompatibleCrypto compatibleCrypto() {
         Map<String, HashFunction> hashFunctions = new HashMap<>();
-        RandomBytes randomBytes = array -> new int[0];
+        RandomBytes randomBytes = numBytes -> new SecureRandom().generateSeed(numBytes);
 
         hashFunctions.put("SHA1", data -> {
             try {
