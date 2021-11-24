@@ -1,6 +1,7 @@
 package com.project_christopher.libraries.srp;
 
 import com.project_christopher.libraries.srp.Components.ServerState;
+import com.project_christopher.libraries.srp.Exceptions.BadClientCredentials;
 import com.project_christopher.libraries.srp.Modules.Routines;
 
 import java.math.BigInteger;
@@ -8,7 +9,8 @@ import java.util.Objects;
 
 public class Server {
 
-    private Routines routines;
+    private final Routines routines;
+
     private String I;
     private BigInteger salt, verifier, B, b;
 
@@ -26,18 +28,18 @@ public class Server {
      * @return B Server's public key.
      */
     public String step1(String identity, String salt, String verifier) {
-        if(identity == null || identity.trim().equals("")) throw new NullPointerException("Identity must not be null nor empty.");
-        if(salt == null || salt.trim().equals("")) throw new NullPointerException("Salt must not be null nor empty.");
-        if(verifier == null || verifier.trim().equals("")) throw new NullPointerException("Verifier must not be null nor empty.");
+        if(identity == null || identity.trim().equals("")) throw new IllegalArgumentException("User's identity (I) must not be null nor empty.");
+        if(salt == null || salt.trim().equals("")) throw new IllegalArgumentException("Salt (s) must not be null nor empty.");
+        if(verifier == null || verifier.trim().equals("")) throw new IllegalArgumentException("Verifier (v) must not be null nor empty.");
 
-        BigInteger v = new BigInteger("0x" + verifier);
+        BigInteger v = new BigInteger(verifier, 16);
 
         BigInteger b = this.routines.generatePrivateValue();
         BigInteger k = this.routines.computeK();
         BigInteger B = this.routines.computeServerPublicValue(k, v, b);
 
         this.I = identity;
-        this.salt = new BigInteger("0x" + salt);
+        this.salt = new BigInteger(salt, 16);
         this.verifier = v;
         this.b = b;
         this.B = B;
@@ -50,10 +52,10 @@ public class Server {
      * @param A Client public key "A"
      */
     private BigInteger sessionKey(BigInteger A) {
-        if(A == null) throw new NullPointerException("Client public value (A) must not be null.");
+        if(A == null) throw new IllegalArgumentException("Client's public value (A) must not be null.");
 
         if (!this.routines.isValidPublicValue(A))
-            throw new IllegalArgumentException("Invalid Client public value (A): " + A.toString(16));
+            throw new IllegalArgumentException("Invalid client's public value (A): " + A.toString(16));
 
         BigInteger u = this.routines.computeU(A, this.B);
 
@@ -67,17 +69,17 @@ public class Server {
      * @param M1 Client message "M1"
      * @return M2 The server evidence message
      */
-    public String step2(String A, String M1) {
-        if(A == null || A.trim().equals("")) throw new NullPointerException("Client public key (A) must not be null nor empty.");
-        if (M1 == null || M1.trim().equals("")) throw new Error("Client evidence (M1) must not be null nor empty.");
+    public String step2(String A, String M1) throws BadClientCredentials {
+        if(A == null || A.trim().equals("")) throw new IllegalArgumentException("Client public value (A) must not be null nor empty.");
+        if (M1 == null || M1.trim().equals("")) throw new IllegalArgumentException("Client evidence (M1) must not be null nor empty.");
 
-        BigInteger Abi = new BigInteger("0x" + A);
-        BigInteger M1bi = new BigInteger("0x" + M1);
+        BigInteger Abi = new BigInteger(A, 16);
+        BigInteger M1bi = new BigInteger(M1, 16);
 
         BigInteger S = this.sessionKey(Abi);
 
         BigInteger computedM1 = this.routines.computeClientEvidence(this.I, this.salt, Abi, this.B, S);
-        if (!Objects.equals(computedM1, M1bi)) throw new Error("Bad client credentials.");
+        if (!Objects.equals(computedM1, M1bi)) throw new BadClientCredentials("Bad client credentials.");
 
         // M2
         return this.routines.computeServerEvidence(Abi, M1bi, S).toString(16);
@@ -105,11 +107,12 @@ public class Server {
     public static Server fromState(Routines routines, ServerState state) {
         Server srv = new Server(routines);
 
+        // filled after step1
         srv.I = state.identity;
-        srv.salt = new BigInteger("0x" + state.salt);
-        srv.verifier = new BigInteger("0x" + state.verifier);
-        srv.b = new BigInteger("0x" + state.b);
-        srv.B = new BigInteger("0x" + state.B);
+        srv.salt = new BigInteger(state.salt, 16);
+        srv.verifier = new BigInteger(state.verifier, 16);
+        srv.b = new BigInteger(state.b, 16);
+        srv.B = new BigInteger(state.B, 16);
 
         return srv;
     }

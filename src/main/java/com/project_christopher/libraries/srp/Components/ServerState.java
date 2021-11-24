@@ -22,4 +22,18 @@ public class ServerState {
                 .put("B", this.B)
                 .put("b", this.b);
     }
+
+    public static ServerState fromJSON(JSONObject json) {
+        return new ServerState(
+                json.has("identity") ? json.getString("identity") : "",
+                json.has("salt") ? json.getString("salt") : "",
+                json.has("verifier") ? json.getString("verifier") : "",
+                json.has("B") ? json.getString("B") : "",
+                json.has("b") ? json.getString("b") : ""
+        );
+    }
+
+    public static ServerState fromJSON(String json) {
+        return fromJSON(new JSONObject(json));
+    }
 }
