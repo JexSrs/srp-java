@@ -61,7 +61,7 @@ public class Client {
         this.M1 = M1;
         this.S = S;
 
-        return new M1AndA(a.toString(16), M1.toString(16));
+        return new M1AndA(A.toString(16), M1.toString(16));
     }
 
     /**

@@ -79,7 +79,7 @@ public class Server {
         BigInteger S = this.sessionKey(Abi);
 
         BigInteger computedM1 = this.routines.computeClientEvidence(this.I, this.salt, Abi, this.B, S);
-        if (!Objects.equals(computedM1, M1bi)) throw new BadClientCredentials("Bad client credentials.");
+        if (!computedM1.equals(M1bi)) throw new BadClientCredentials("Bad client credentials.");
 
         // M2
         return this.routines.computeServerEvidence(Abi, M1bi, S).toString(16);

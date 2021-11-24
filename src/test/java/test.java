@@ -38,8 +38,6 @@ public class test {
         register(db);
         login(db);
 
-        System.out.println("End of test file.");
-
         new Thread(() -> {
             Assertions.assertDoesNotThrow(() -> Thread.sleep(TIMEOUT));
             System.out.println("Timeout was reached.");
@@ -65,7 +63,7 @@ public class test {
         db.add(new Document(username, salt, verifier));
     }
 
-    public void login(ArrayList<Document> db) throws BadServerCredentials {
+    public void login(ArrayList<Document> db) throws BadServerCredentials, BadClientCredentials {
         final String username = "projectChristopher";
         String password = "password";
 
@@ -90,23 +88,18 @@ public class test {
 
         // Client
         M1AndA m1AndA = client.step2(salt, B);
-        String M1 = m1AndA.M1;
         String A = m1AndA.A;
+        String M1 = m1AndA.M1;
         /* sendToServer(A, M1) */
 
         // Server
-        String M2 = null;
-        try { M2 = server.step2(A, M1); }
-        catch (BadClientCredentials e) {
-            e.printStackTrace();
-            // Send random data.
-            /* respondToClient(randomM2) */
-        }
+        String M2 = server.step2(A, M1);
         /* respondToClient(M2) */
 
         // Client
         client.step3(M2);
 
+        System.out.println("End of test file.");
         System.exit(0);
     }
 }
