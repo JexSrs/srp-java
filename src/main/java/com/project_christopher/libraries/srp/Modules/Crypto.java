@@ -17,7 +17,11 @@ public class Crypto {
      */
     static CompatibleCrypto compatibleCrypto() {
         Map<String, HashFunction> hashFunctions = new HashMap<>();
-        RandomBytes randomBytes = numBytes -> new SecureRandom().generateSeed(numBytes);
+        RandomBytes randomBytes = numBytes -> {
+            byte[] bytes = new byte[numBytes];
+            new SecureRandom().nextBytes(bytes);
+            return bytes;
+        };
 
         hashFunctions.put("SHA1", data -> {
             try {
