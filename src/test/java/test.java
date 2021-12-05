@@ -7,20 +7,11 @@ import com.project_christopher.libraries.srp.Modules.Parameters;
 import com.project_christopher.libraries.srp.Modules.Routines;
 import com.project_christopher.libraries.srp.Modules.Utils;
 import com.project_christopher.libraries.srp.Server;
+import jdk.nashorn.internal.parser.JSONParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-
-class Document {
-    String username, salt, verifier;
-
-    public Document(String username, String salt, String verifier) {
-        this.username = username;
-        this.salt = salt;
-        this.verifier = verifier;
-    }
-}
 
 public class test {
 
@@ -44,8 +35,6 @@ public class test {
             System.exit(1);
         }).start();
     }
-
-
 
     public void register(ArrayList<Document> db) {
         // Client
@@ -75,7 +64,7 @@ public class test {
 
         // Server
         Server server = new Server(new Routines(new Parameters()));
-        Document document = db.get(0); // Search in db
+        Document document = Document.find(db, username); // Search in db
         if(document == null) {
             // Send random data to avoid if user exists
             /* respondToClient(randomB, randomSalt) */

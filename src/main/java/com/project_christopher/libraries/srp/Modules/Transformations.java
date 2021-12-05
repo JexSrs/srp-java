@@ -2,6 +2,7 @@ package com.project_christopher.libraries.srp.Modules;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class Transformations {
 
@@ -10,7 +11,11 @@ public class Transformations {
      * @param n Any big integer.
      */
     public static byte[] bigintToByteArray(BigInteger n) {
-        return n.toByteArray();
+        byte[] bytes = n.toByteArray();
+        if (bytes[0] == 0)
+            return Arrays.copyOfRange(bytes, 1, bytes.length);
+
+        return bytes;
     }
 
     /**
@@ -18,7 +23,7 @@ public class Transformations {
      * @param bytes The byte array.
      */
     public static BigInteger byteArrayToBigint(byte[] bytes) {
-        return new BigInteger(bytes);
+        return new BigInteger(1, bytes);
     }
 
     /**

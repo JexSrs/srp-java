@@ -64,8 +64,8 @@ public class Utils {
     }
 
     /**
-     * Generates random ArrayBuffer.
-     * @param numBytes Length of the ArrayBuffer in bytes.
+     * Generates random byte array.
+     * @param numBytes Length of the byte array.
      */
     public static byte[] generateRandom(int numBytes) {
         return cc.randomBytes.call(numBytes);
