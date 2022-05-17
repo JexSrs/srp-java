@@ -1,11 +1,11 @@
 package com.project_christopher.libraries.srp;
 
+import com.project_christopher.libraries.srp.Components.Options;
 import com.project_christopher.libraries.srp.Components.ServerState;
 import com.project_christopher.libraries.srp.Exceptions.BadClientCredentials;
 import com.project_christopher.libraries.srp.Modules.Routines;
 
 import java.math.BigInteger;
-import java.util.Objects;
 
 public class Server {
 
@@ -14,8 +14,16 @@ public class Server {
     private String I;
     private BigInteger salt, verifier, B, b;
 
-    public Server(Routines routines) {
-        this.routines = routines;
+    public Server(Options options) {
+        this.routines = (options.routines != null ? options.routines : new Routines()).apply(options);
+
+        if(options.srvState != null) {
+            this.I = options.srvState.identity;
+            this.salt = new BigInteger(options.srvState.salt, 16);
+            this.verifier = new BigInteger(options.srvState.verifier, 16);
+            this.b = new BigInteger(options.srvState.b, 16);
+            this.B = new BigInteger(options.srvState.B, 16);
+        }
     }
 
 
@@ -97,23 +105,5 @@ public class Server {
                 this.B.toString(16),
                 this.b.toString(16)
         );
-    }
-
-    /**
-     * Generates Server session from existing values: identity, salt, verifier, b and B.
-     * @param routines The routines used when server session first generated.
-     * @param state The state object, usually can be accessed from toJSON().
-     */
-    public static Server fromState(Routines routines, ServerState state) {
-        Server srv = new Server(routines);
-
-        // filled after step1
-        srv.I = state.identity;
-        srv.salt = new BigInteger(state.salt, 16);
-        srv.verifier = new BigInteger(state.verifier, 16);
-        srv.b = new BigInteger(state.b, 16);
-        srv.B = new BigInteger(state.B, 16);
-
-        return srv;
     }
 }

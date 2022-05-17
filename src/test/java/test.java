@@ -1,13 +1,12 @@
 import com.project_christopher.libraries.srp.Client;
 import com.project_christopher.libraries.srp.Components.IVerifierAndSalt;
 import com.project_christopher.libraries.srp.Components.M1AndA;
+import com.project_christopher.libraries.srp.Components.Options;
 import com.project_christopher.libraries.srp.Exceptions.BadClientCredentials;
 import com.project_christopher.libraries.srp.Exceptions.BadServerCredentials;
-import com.project_christopher.libraries.srp.Modules.Parameters;
 import com.project_christopher.libraries.srp.Modules.Routines;
 import com.project_christopher.libraries.srp.Modules.Utils;
 import com.project_christopher.libraries.srp.Server;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,13 +35,20 @@ public class test {
         }).start();
     }
 
+    private Options getOptions() {
+        Options options = new Options();
+        options.routines = new Routines();
+        options.primeGroup = Routines.PrimeGroup.get(2048);
+        options.hashFunction = Routines.Hash.get("SHA512");
+        return options;
+    }
+
     public void register(ArrayList<Document> db) {
         // Client
         final String username = "projectChristopher";
         final String password = "password";
 
-        Routines routines = new Routines(new Parameters());
-        IVerifierAndSalt verifierAndSalt = Utils.generateVerifierAndSalt(routines, username, password);
+        IVerifierAndSalt verifierAndSalt = Client.register(getOptions(), username, password);
         String salt = verifierAndSalt.salt;
         String verifier = verifierAndSalt.verifier;
         /* sendToServer(username, salt, verifier) */
@@ -57,13 +63,13 @@ public class test {
         String password = "password";
 
         // Client
-        Client client = new Client(new Routines(new Parameters()));
+        Client client = new Client(getOptions());
         client.step1(username, password);
         password = ""; // No longer needed.
         /* sendToServer(username) */
 
         // Server
-        Server server = new Server(new Routines(new Parameters()));
+        Server server = new Server(getOptions());
         Document document = Document.find(db, username); // Search in db
         if(document == null) {
             // Send random data to avoid if user exists

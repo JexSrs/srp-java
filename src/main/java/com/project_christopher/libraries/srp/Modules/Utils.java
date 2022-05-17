@@ -1,18 +1,14 @@
 package com.project_christopher.libraries.srp.Modules;
 
-import com.project_christopher.libraries.srp.Components.CompatibleCrypto;
+import com.project_christopher.libraries.srp.Components.HashFunction;
 import com.project_christopher.libraries.srp.Components.IVerifierAndSalt;
+import com.project_christopher.libraries.srp.Components.Options;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class Utils {
-
-    private static CompatibleCrypto cc;
-    static {
-        cc = Crypto.compatibleCrypto();
-    }
 
     /**
      * Left pad ArrayBuffer with zeroes.
@@ -34,10 +30,9 @@ public class Utils {
 
     /**
      * Generates a hash using an ArrayBuffer.
-     * @param parameters The parameters used for hashing.
      * @param arrays The arrays that will be hashed.
      */
-    public static byte[] hash(Parameters parameters, byte[] ...arrays) {
+    public static byte[] hash(HashFunction hf, byte[] ...arrays) {
         int length = 0;
         for (byte[] array : arrays) length += array.length;
 
@@ -47,20 +42,19 @@ public class Utils {
             offset += arrays[i].length;
         }
 
-        return parameters.hash.call(target);
+        return hf.call(target);
     }
 
     /**
      * Left pad in ArrayBuffer with zeroes and generates a hash from it.
-     * @param parameters The parameters used fro hashing.
      * @param targetLen Length of the target array in bytes.
      * @param arrays The arrays that the transformation will be applied.
      */
-    public static byte[] hashPadded(Parameters parameters, int targetLen, byte[] ...arrays) {
+    public static byte[] hashPadded(HashFunction hf, int targetLen, byte[] ...arrays) {
         for (int i = 0; i < arrays.length; i++)
             arrays[i] = padStartByteArray(arrays[i], targetLen);
 
-        return hash(parameters, arrays);
+        return hash(hf, arrays);
     }
 
     /**
@@ -68,7 +62,7 @@ public class Utils {
      * @param numBytes Length of the byte array.
      */
     public static byte[] generateRandom(int numBytes) {
-        return cc.randomBytes.call(numBytes);
+        return Routines.randomBytes.call(numBytes);
     }
 
     /**
@@ -91,15 +85,17 @@ public class Utils {
 
     /**
      * Generates a random verifier using the user's Identity, salt and Password.
-     * @param routines The routines used for hashing.
      * @param I The user's identity.
      * @param s The random salt.
      * @param P The user's Password
      */
-    public static BigInteger createVerifier(Routines routines, String I, BigInteger s, String P) {
+    public static BigInteger createVerifier(Options options, String I, BigInteger s, String P) {
         if(I == null || I.trim().equals("")) throw new IllegalArgumentException("Identity (I) must not be null or empty.");
         if(s == null) throw new IllegalArgumentException("Salt (s) must not be null.");
         if(P == null || P.trim().equals("")) throw new IllegalArgumentException("Password (P) must not be null or empty.");
+
+        Routines routines = options.routines != null ? options.routines : new Routines();
+        routines.apply(options);
 
         BigInteger x = routines.computeX(I, s, P);
         return routines.computeVerifier(x);
@@ -111,8 +107,8 @@ public class Utils {
      * @param I The user's identity.
      * @param P The user's password.
      */
-    public static IVerifierAndSalt generateVerifierAndSalt(Routines routines, String I, String P) {
-        return generateVerifierAndSalt(routines, I, P, null);
+    public static IVerifierAndSalt generateVerifierAndSalt(Options options, String I, String P) {
+        return generateVerifierAndSalt(options, I, P, null);
     }
 
     /**
@@ -122,16 +118,18 @@ public class Utils {
      * @param P The user's password.
      * @param sBytes Length of salt in bytes.
      */
-    public static IVerifierAndSalt generateVerifierAndSalt(Routines routines, String I, String P, Integer sBytes) {
-        BigInteger s = routines.generateRandomSalt(sBytes);
+    public static IVerifierAndSalt generateVerifierAndSalt(Options options, String I, String P, Integer sBytes) {
+        options.routines = (options.routines != null ? options.routines : new Routines()).apply(options);
+
+        BigInteger s = options.routines.generateRandomSalt(sBytes);
 
         return new IVerifierAndSalt(
-                createVerifier(routines, I, s, P).toString(16),
+                createVerifier(options, I, s, P).toString(16),
                 s.toString(16)
         );
     }
 
-    public static int hashBitCount(Parameters parameters) {
-        return hash(parameters, Transformations.bigintToByteArray(BigInteger.ONE)).length * 8;
+    public static int hashBitCount(HashFunction hf) {
+        return hash(hf, Transformations.bigintToByteArray(BigInteger.ONE)).length * 8;
     }
 }
