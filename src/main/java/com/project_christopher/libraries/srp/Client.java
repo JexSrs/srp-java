@@ -1,14 +1,24 @@
 package com.project_christopher.libraries.srp;
 
 import com.project_christopher.libraries.srp.Components.ClientState;
+import com.project_christopher.libraries.srp.Components.IVerifierAndSalt;
 import com.project_christopher.libraries.srp.Components.M1AndA;
-import com.project_christopher.libraries.srp.Components.ServerState;
+import com.project_christopher.libraries.srp.Components.Options;
 import com.project_christopher.libraries.srp.Exceptions.BadServerCredentials;
 import com.project_christopher.libraries.srp.Modules.Routines;
+import com.project_christopher.libraries.srp.Modules.Utils;
 
 import java.math.BigInteger;
 
 public class Client {
+
+    public static IVerifierAndSalt register(Options options, String I, String P) {
+        return Utils.generateVerifierAndSalt(options, I, P, null);
+    }
+
+    public static IVerifierAndSalt register(Options options, String I, String P, Integer sBytes) {
+        return Utils.generateVerifierAndSalt(options, I, P, sBytes);
+    }
 
     private final Routines routines;
 
@@ -16,8 +26,20 @@ public class Client {
     private byte[] IH;
     private BigInteger A, a, M1, S;
 
-    public Client(Routines routines) {
-        this.routines = routines;
+    public Client(Options options) {
+        this.routines = (options.routines != null ? options.routines : new Routines()).apply(options);
+
+        if(options.clientState != null) {
+            // filled after step1
+            this.I = options.clientState.identity;
+            this.IH = options.clientState.IH;
+
+            // filled after step 2
+            this.A = new BigInteger(options.clientState.A, 16);
+            this.a = new BigInteger(options.clientState.a, 16);
+            this.M1 = new BigInteger(options.clientState.M1, 16);
+            this.S = new BigInteger(options.clientState.S, 16);
+        }
     }
 
     /**
@@ -91,26 +113,5 @@ public class Client {
                 this.M1.toString(16),
                 this.S.toString(16)
         );
-    }
-
-    /**
-     * Generates Client session from existing values: identity, IH, A, a, M1 and S.
-     * @param routines The routines used when client session first generated.
-     * @param state The state object, usually can be accessed from toJSON().
-     */
-    public static Client fromState(Routines routines, ClientState state) {
-        Client cl = new Client(routines);
-
-        // filled after step1
-        cl.I = state.identity;
-        cl.IH = state.IH;
-
-        // filled after step 2
-        cl.A = new BigInteger(state.A, 16);
-        cl.a = new BigInteger(state.a, 16);
-        cl.M1 = new BigInteger(state.M1, 16);
-        cl.S = new BigInteger(state.S, 16);
-
-        return cl;
     }
 }
