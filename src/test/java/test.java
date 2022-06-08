@@ -5,7 +5,6 @@ import com.project_christopher.libraries.srp.Components.Options;
 import com.project_christopher.libraries.srp.Exceptions.BadClientCredentials;
 import com.project_christopher.libraries.srp.Exceptions.BadServerCredentials;
 import com.project_christopher.libraries.srp.Modules.Routines;
-import com.project_christopher.libraries.srp.Modules.Utils;
 import com.project_christopher.libraries.srp.Server;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -45,8 +44,8 @@ public class test {
 
     public void register(ArrayList<Document> db) {
         // Client
-        final String username = "projectChristopher";
-        final String password = "password";
+        final String username = "JexSrs";
+        final String password = "pass123";
 
         IVerifierAndSalt verifierAndSalt = Client.register(getOptions(), username, password);
         String salt = verifierAndSalt.salt;
@@ -59,8 +58,8 @@ public class test {
     }
 
     public void login(ArrayList<Document> db) throws BadServerCredentials, BadClientCredentials {
-        final String username = "projectChristopher";
-        String password = "password";
+        final String username = "JexSrs";
+        String password = "pass123";
 
         // Client
         Client client = new Client(getOptions());

@@ -64,8 +64,8 @@ public class node {
 
     public void register() throws IOException {
         // Client
-        final String username = "projectChristopher";
-        final String password = "password";
+        final String username = "JexSrs";
+        final String password = "pass123";
 
         IVerifierAndSalt verifierAndSalt = Client.register(getOptions(), username, password);
 
@@ -78,8 +78,8 @@ public class node {
     }
 
     public void login() throws BadServerCredentials, IOException {
-        final String username = "projectChristopher";
-        String password = "password";
+        final String username = "JexSrs";
+        String password = "pass123";
 
         Client client = new Client(getOptions());
         client.step1(username, password);
