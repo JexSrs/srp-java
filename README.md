@@ -71,11 +71,11 @@ if(document == null) {
 }
 
 String salt = document.salt;
-String B = server.step1(username, salt, document.verifier); // Generate server's public key
-saveToCache(server.toState()); // Mayve a redis or database
+String B = server.step1(username, salt, document.verifier);
+saveToCache(server.toState()); // Maybe a redis or database
 respondToClient(B, salt);
 ```
-### Step 2
+#### Step 2
 In this step the client has received the public value (B) and salt from the server.
 The client will now generate a public value (A) and the evidence message (M1) and send it to server
 to authenticate itself.
