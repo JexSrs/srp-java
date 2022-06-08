@@ -1,9 +1,9 @@
-package com.project_christopher.libraries.srp.Modules;
+package gr.jexsrs.srp.Modules;
 
-import com.project_christopher.libraries.srp.Components.HashFunction;
-import com.project_christopher.libraries.srp.Components.Options;
-import com.project_christopher.libraries.srp.Components.PrimeGroup;
-import com.project_christopher.libraries.srp.Components.RandomBytes;
+import gr.jexsrs.srp.Components.HashFunction;
+import gr.jexsrs.srp.Components.Options;
+import gr.jexsrs.srp.Components.PrimeGroup;
+import gr.jexsrs.srp.Components.RandomBytes;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -21,7 +21,7 @@ public class Routines {
     };
 
     public static Map<String, HashFunction> Hash = new HashMap<>();
-    public static Map<Integer, PrimeGroup> PrimeGroup = new HashMap<>();
+    public static Map<Integer, gr.jexsrs.srp.Components.PrimeGroup> PrimeGroup = new HashMap<>();
 
     static {
         Hash.put("SHA1", data -> {

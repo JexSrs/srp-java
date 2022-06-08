@@ -1,9 +1,9 @@
-package com.project_christopher.libraries.srp;
+package gr.jexsrs.srp;
 
-import com.project_christopher.libraries.srp.Components.Options;
-import com.project_christopher.libraries.srp.Components.ServerState;
-import com.project_christopher.libraries.srp.Exceptions.BadClientCredentials;
-import com.project_christopher.libraries.srp.Modules.Routines;
+import gr.jexsrs.srp.Components.Options;
+import gr.jexsrs.srp.Components.ServerState;
+import gr.jexsrs.srp.Exceptions.BadClientCredentials;
+import gr.jexsrs.srp.Modules.Routines;
 
 import java.math.BigInteger;
 

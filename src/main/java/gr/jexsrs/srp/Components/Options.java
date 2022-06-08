@@ -1,6 +1,6 @@
-package com.project_christopher.libraries.srp.Components;
+package gr.jexsrs.srp.Components;
 
-import com.project_christopher.libraries.srp.Modules.Routines;
+import gr.jexsrs.srp.Modules.Routines;
 
 public class Options {
     public PrimeGroup primeGroup;

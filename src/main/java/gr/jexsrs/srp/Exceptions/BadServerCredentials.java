@@ -1,4 +1,4 @@
-package com.project_christopher.libraries.srp.Exceptions;
+package gr.jexsrs.srp.Exceptions;
 
 public class BadServerCredentials extends Exception{
     public BadServerCredentials(String message) {
