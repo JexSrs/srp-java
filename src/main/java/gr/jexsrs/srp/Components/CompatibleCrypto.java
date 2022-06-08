@@ -1,4 +1,4 @@
-package com.project_christopher.libraries.srp.Components;
+package gr.jexsrs.srp.Components;
 
 import java.util.Map;
 

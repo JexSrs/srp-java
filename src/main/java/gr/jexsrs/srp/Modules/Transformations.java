@@ -1,4 +1,4 @@
-package com.project_christopher.libraries.srp.Modules;
+package gr.jexsrs.srp.Modules;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
