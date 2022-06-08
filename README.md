@@ -38,7 +38,7 @@ This flow will register a new user to the server.
 
 ```java
 // Client
-IVerifierAndSalt verifierAndSalt = Client.register(options, username, password);
+IVerifierAndSalt verifierAndSalt = Utils.generateVerifierAndSalt(options, username, password);
 sendToServer(username, verifierAndSalt.salt, verifierAndSalt.verifier);
 
 // Server

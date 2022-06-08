@@ -1,24 +1,14 @@
 package com.project_christopher.libraries.srp;
 
 import com.project_christopher.libraries.srp.Components.ClientState;
-import com.project_christopher.libraries.srp.Components.IVerifierAndSalt;
 import com.project_christopher.libraries.srp.Components.M1AndA;
 import com.project_christopher.libraries.srp.Components.Options;
 import com.project_christopher.libraries.srp.Exceptions.BadServerCredentials;
 import com.project_christopher.libraries.srp.Modules.Routines;
-import com.project_christopher.libraries.srp.Modules.Utils;
 
 import java.math.BigInteger;
 
 public class Client {
-
-    public static IVerifierAndSalt register(Options options, String I, String P) {
-        return Utils.generateVerifierAndSalt(options, I, P, null);
-    }
-
-    public static IVerifierAndSalt register(Options options, String I, String P, Integer sBytes) {
-        return Utils.generateVerifierAndSalt(options, I, P, sBytes);
-    }
 
     private final Routines routines;
 

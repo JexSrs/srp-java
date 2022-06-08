@@ -5,6 +5,7 @@ import com.project_christopher.libraries.srp.Components.Options;
 import com.project_christopher.libraries.srp.Exceptions.BadClientCredentials;
 import com.project_christopher.libraries.srp.Exceptions.BadServerCredentials;
 import com.project_christopher.libraries.srp.Modules.Routines;
+import com.project_christopher.libraries.srp.Modules.Utils;
 import com.project_christopher.libraries.srp.Server;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ public class test {
         final String username = "JexSrs";
         final String password = "pass123";
 
-        IVerifierAndSalt verifierAndSalt = Client.register(getOptions(), username, password);
+        IVerifierAndSalt verifierAndSalt = Utils.generateVerifierAndSalt(getOptions(), username, password);
         String salt = verifierAndSalt.salt;
         String verifier = verifierAndSalt.verifier;
         /* sendToServer(username, salt, verifier) */

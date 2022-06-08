@@ -67,7 +67,7 @@ public class node {
         final String username = "JexSrs";
         final String password = "pass123";
 
-        IVerifierAndSalt verifierAndSalt = Client.register(getOptions(), username, password);
+        IVerifierAndSalt verifierAndSalt = Utils.generateVerifierAndSalt(getOptions(), username, password);
 
         /* sendToServer(username, salt, verifier) */
         String json = String.format("{\"username\":\"%s\", \"salt\":\"%s\", \"verifier\":\"%s\"}", username, verifierAndSalt.salt, verifierAndSalt.verifier);
